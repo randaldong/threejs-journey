@@ -1,6 +1,18 @@
 /****************************** Import ******************************/
 import * as THREE from 'three'
 
+/****************************** User Control ******************************/
+/*          Cursor          */
+const cursor = {
+    x: 0,
+    y: 0,
+}
+// Cursor coordinates upon mouse move
+window.addEventListener('mousemove', (event) => {
+    cursor.x = event.clientX / sizes.width - 0.5
+    cursor.y = -(event.clientY / sizes.height - 0.5)
+})
+
 /****************************** Canvas ******************************/
 const canvas = document.querySelector('canvas.webgl')
 
@@ -20,12 +32,13 @@ scene.add(mesh)
 
 // Sizes
 const sizes = {
-    width: 800,
-    height: 600
+    width: window.innerWidth,
+    height: window.innerHeight
 }
 
 /****************************** Camera ******************************/
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
+//const dist = camera.position.distanceTo(mesh.position)
 
 camera.position.x = 1
 camera.position.z = 3
@@ -49,8 +62,15 @@ const tick = () => {
     // Time
     const deltaTime = clock.getDelta ()
 
-    // Update
-    mesh.rotation.y += 1 * deltaTime
+    // Update Object
+    //mesh.rotation.y += 1 * deltaTime
+
+    // Update Camera
+    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 1.5 + mesh.position.x
+    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 1.5 + mesh.position.z
+    camera.position.y = cursor.y * 2 + mesh.position.y
+    
+    camera.lookAt(mesh.position)
 
     // Render
     renderer.render(scene, camera)
