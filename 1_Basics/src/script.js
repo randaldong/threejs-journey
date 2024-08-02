@@ -1,17 +1,6 @@
 /****************************** Import ******************************/
 import * as THREE from 'three'
-
-/****************************** User Control ******************************/
-/*          Cursor          */
-const cursor = {
-    x: 0,
-    y: 0,
-}
-// Cursor coordinates upon mouse move
-window.addEventListener('mousemove', (event) => {
-    cursor.x = event.clientX / sizes.width - 0.5
-    cursor.y = -(event.clientY / sizes.height - 0.5)
-})
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 /****************************** Canvas ******************************/
 const canvas = document.querySelector('canvas.webgl')
@@ -46,6 +35,25 @@ camera.position.y = 1
 
 scene.add(camera)
 
+/****************************** Control ******************************/
+/*          Custom Controls          */
+const cursor = {
+    x: 0,
+    y: 0,
+}
+// Cursor coordinates upon mouse move
+window.addEventListener('mousemove', (event) => {
+    cursor.x = event.clientX / sizes.width - 0.5
+    cursor.y = -(event.clientY / sizes.height - 0.5)
+})
+
+/*          Three.js Controls          */
+// OrbitControls
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
+controls.target.set(mesh.position.x, mesh.position.y, mesh.position.z)
+controls.update()
+
 /****************************** Renderer ******************************/
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
@@ -66,11 +74,13 @@ const tick = () => {
     //mesh.rotation.y += 1 * deltaTime
 
     // Update Camera
-    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 1.5 + mesh.position.x
-    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 1.5 + mesh.position.z
-    camera.position.y = cursor.y * 2 + mesh.position.y
-    
-    camera.lookAt(mesh.position)
+    // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 1.5 + mesh.position.x
+    // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 1.5 + mesh.position.z
+    // camera.position.y = cursor.y * 2 + mesh.position.y
+    // camera.lookAt(mesh.position)
+
+    // Update Controls
+    controls.update()
 
     // Render
     renderer.render(scene, camera)
