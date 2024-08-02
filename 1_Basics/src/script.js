@@ -9,8 +9,27 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /****************************** Object ******************************/
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: "#aab6f3" })
+// Geometry
+//const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
+const geometry = new THREE.BufferGeometry()
+
+const triNum = 300
+const positionArray = new Float32Array(triNum * 3 * 3)
+for (let i = 0; i < triNum * 3 * 3; i += 3){
+    positionArray[i] = Math.cos(Math.random() * Math.PI)
+    positionArray[i + 1] = Math.sin(positionArray[i] * Math.PI)
+    positionArray[i + 2] = Math.cos(positionArray[i] * Math.PI)
+}
+const positionAttribute = new THREE.BufferAttribute(positionArray, 3)
+geometry.setAttribute('position', positionAttribute)
+
+// Material
+const material = new THREE.MeshBasicMaterial({
+    color: "#aab6f3",
+    wireframe: true,
+})
+
+// Mesh
 const mesh = new THREE.Mesh(geometry, material)
 
 mesh.position.x = 0.5
