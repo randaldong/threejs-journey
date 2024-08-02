@@ -19,14 +19,49 @@ mesh.position.y = 0
 
 scene.add(mesh)
 
-// Sizes
-const sizes = {
+/****************************** Viewport ******************************/
+const size = {
     width: window.innerWidth,
     height: window.innerHeight
 }
 
+// Listen to the resize event
+window.addEventListener('resize', () => {
+    // Update size
+    size.width = window.innerWidth
+    size.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = size.width / size.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(size.width, size.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    
+})
+
+// Listen to the double click event for toggling fullscreen
+window.addEventListener('dblclick', () => {
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
+    if (!fullscreenElement) {
+        if (canvas.requestFullscreen) {
+            canvas.requestFullscreen()
+        } else if (canvas.webkitRequestFullscreen) { // Safari
+            canvas.webkitRequestFullscreen()
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+        } else if (document.webkitExitFullscreen) { // Safari
+            document.webkitExitFullscreen()
+        }
+        
+    }
+})
+
 /****************************** Camera ******************************/
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
+const camera = new THREE.PerspectiveCamera(75, size.width / size.height)
 //const dist = camera.position.distanceTo(mesh.position)
 
 camera.position.x = 1
@@ -43,8 +78,8 @@ const cursor = {
 }
 // Cursor coordinates upon mouse move
 window.addEventListener('mousemove', (event) => {
-    cursor.x = event.clientX / sizes.width - 0.5
-    cursor.y = -(event.clientY / sizes.height - 0.5)
+    cursor.x = event.clientX / size.width - 0.5
+    cursor.y = -(event.clientY / size.height - 0.5)
 })
 
 /*          Three.js Controls          */
@@ -58,7 +93,8 @@ controls.update()
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.setSize(sizes.width, sizes.height)
+renderer.setSize(size.width, size.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 // renderer.render(scene, camera)
 
 /****************************** Animation ******************************/
