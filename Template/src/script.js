@@ -1,5 +1,8 @@
 /****************************** Import ******************************/
 import * as THREE from 'three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import gsap from 'gsap'
+import GUI from 'lil-gui'
 
 /****************************** Canvas ******************************/
 const canvas = document.querySelector('canvas.webgl')
@@ -9,7 +12,7 @@ const scene = new THREE.Scene()
 
 /****************************** Object ******************************/
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+const material = new THREE.MeshBasicMaterial({ color: '#aab6f3' })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 

@@ -1,6 +1,32 @@
 /****************************** Import ******************************/
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import gsap from 'gsap'
+import GUI from 'lil-gui'
+
+/****************************** Debug GUI ******************************/
+const gui = new GUI({
+    width: 300,
+    title: 'Debug GUI',
+    closeFolders: false,
+
+})
+// gui.close()
+// gui.hide()
+
+// Toggle between open/close of the debug GUI
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'g')
+        gui.open(gui._closed)
+})
+
+// Toggle the visibility of the debug GUI
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'h')
+        gui.show(gui._hidden)
+})
+
+const debugObj = {}
 
 /****************************** Canvas ******************************/
 const canvas = document.querySelector('canvas.webgl')
@@ -10,8 +36,8 @@ const scene = new THREE.Scene()
 
 /****************************** Object ******************************/
 // Geometry
-//const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
-const geometry = new THREE.BufferGeometry()
+const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
+/* const geometry = new THREE.BufferGeometry()
 
 const triNum = 300
 const positionArray = new Float32Array(triNum * 3 * 3)
@@ -21,11 +47,12 @@ for (let i = 0; i < triNum * 3 * 3; i += 3){
     positionArray[i + 2] = Math.cos(positionArray[i] * Math.PI)
 }
 const positionAttribute = new THREE.BufferAttribute(positionArray, 3)
-geometry.setAttribute('position', positionAttribute)
+geometry.setAttribute('position', positionAttribute) */
 
 // Material
+debugObj.color = '#aab6f3'
 const material = new THREE.MeshBasicMaterial({
-    color: "#aab6f3",
+    color: debugObj.color,
     wireframe: true,
 })
 
@@ -37,6 +64,34 @@ mesh.position.z = -1
 mesh.position.y = 0
 
 scene.add(mesh)
+
+/****************************** Debug GUI ******************************/
+const cubeTweaks = gui.addFolder('Cube Tweaks')
+//cubeTweaks.close() // close this folder by default
+cubeTweaks.addColor(debugObj, 'color')
+    .onChange(() => {
+    material.color.set(debugObj.color)
+})
+
+cubeTweaks.add(material, 'wireframe')
+
+debugObj.spin = () => {
+    gsap.to(mesh.rotation, { duration: 2, y: mesh.rotation.y + Math.PI * 2 })
+}
+cubeTweaks.add(debugObj, 'spin')
+
+debugObj.subdivision = 2;
+cubeTweaks.add(debugObj, 'subdivision')
+    .min(1)
+    .max(10)
+    .step(1)
+    .onFinishChange(() => {
+        mesh.geometry.dispose()
+        mesh.geometry = new THREE.BoxGeometry(
+            1, 1, 1,
+            debugObj.subdivision, debugObj.subdivision, debugObj.subdivision
+        )
+    })
 
 /****************************** Viewport ******************************/
 const size = {
