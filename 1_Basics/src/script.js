@@ -49,11 +49,29 @@ for (let i = 0; i < triNum * 3 * 3; i += 3){
 const positionAttribute = new THREE.BufferAttribute(positionArray, 3)
 geometry.setAttribute('position', positionAttribute) */
 
+// Texture
+const loadingManager = new THREE.LoadingManager()
+const textureLoader = new THREE.TextureLoader(loadingManager)
+const colorMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_basecolor.png')
+/* const normalMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_normal.png')
+const metallicMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_metallic.png')
+const roughnessMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_roughness.png')
+const heightMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_height.png')
+const aoMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_ambientOcclusion.png') */
+colorMap.colorSpace = THREE.SRGBColorSpace
+/* normalMap.colorSpace = THREE.SRGBColorSpace
+metallicMap.colorSpace = THREE.SRGBColorSpace
+roughnessMap.colorSpace = THREE.SRGBColorSpace
+heightMap.colorSpace = THREE.SRGBColorSpace
+aoMap.colorSpace = THREE.SRGBColorSpace */
+
+
 // Material
 debugObj.color = '#aab6f3'
 const material = new THREE.MeshBasicMaterial({
-    color: debugObj.color,
-    wireframe: true,
+    //color: debugObj.color,
+    map: colorMap,
+    wireframe: false,
 })
 
 // Mesh
