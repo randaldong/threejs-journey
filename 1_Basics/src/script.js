@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import gsap from 'gsap'
 import GUI from 'lil-gui'
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
 
 /****************************** Debug GUI ******************************/
 const gui = new GUI({
@@ -49,7 +50,7 @@ colorKintsugi.colorSpace = THREE.SRGBColorSpace
 
 const colorObsidian = textureLoader.load('textures/Obsidian/basecolor.png')
 const normalObsidian = textureLoader.load('textures/Obsidian/normal.png')
-const metallicObsidian = textureLoader.load('textures/Obsidian/metallic.png')
+const alphaObsidian = textureLoader.load('textures/Obsidian/translucency.png')
 const roughnessObsidian = textureLoader.load('textures/Obsidian/roughness.png')
 const heightObsidian = textureLoader.load('textures/Obsidian/height.png')
 const aoObsidian = textureLoader.load('textures/Obsidian/ambientOcclusion.png')
@@ -65,34 +66,69 @@ colorRedTile.colorSpace = THREE.SRGBColorSpace
 
 
 // Material
-debugObj.color = '#aab6f3'
-const kintsugi = new THREE.MeshBasicMaterial()
+//debugObj.color = '#aab6f3'
+const kintsugi = new THREE.MeshStandardMaterial()
 kintsugi.map = colorKintsugi
+kintsugi.normalMap = normalKintsugi
+kintsugi.metalnessMap = metallicKintsugi
+kintsugi.roughnessMap = roughnessKintsugi
+kintsugi.displacementMap = heightKintsugi
+kintsugi.displacementScale = 0.1
+kintsugi.aoMap = aoKintsugi
 
-const obsidian = new THREE.MeshBasicMaterial()
+const obsidian = new THREE.MeshStandardMaterial()
 obsidian.map = colorObsidian
+obsidian.normalMap = normalObsidian
+obsidian.roughnessMap = roughnessObsidian
+obsidian.displacementMap = heightObsidian
+obsidian.displacementScale = 0.1
+obsidian.aoMap = aoObsidian
 
-const redTile = new THREE.MeshBasicMaterial()
+const redTile = new THREE.MeshStandardMaterial()
 redTile.map = colorRedTile
+redTile.normalMap = normalRedTile
+redTile.metalnessMap = metallicRedTile
+redTile.roughnessMap = roughnessRedTile
+redTile.displacementMap = heightRedTile
+obsidian.displacementScale = 0.1
+redTile.aoMap = aoRedTile
 
 // Mesh
 const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.6, 16, 16),
-    kintsugi
+    new THREE.SphereGeometry(0.6, 32, 32),
+    obsidian
 )
 sphere.position.x = -2
 
 const box = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1, 2, 2, 2),
-    obsidian
+    new THREE.BoxGeometry(1, 1, 1),
+    redTile
 )
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.4, 0.2, 16, 32),
-    redTile
+    kintsugi
 )
 torus.position.x = 2
 
-scene.add(sphere, box ,torus)
+scene.add(sphere, box, torus)
+
+// Light
+/* const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+scene.add(ambientLight)
+
+const pointLight = new THREE.PointLight(0xffffff, 10)
+pointLight.position.y = 3
+scene.add(pointLight) */
+
+// Environment Map
+const rgbeLoader = new RGBELoader()
+rgbeLoader.load('textures/EnvironmentMap/leadenhall_market_2k.hdr', (environmentMap) => {
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping
+    scene.background = environmentMap
+    scene.environment = environmentMap
+
+})
+
 
 /****************************** Debug GUI ******************************/
 const boxTweaks = gui.addFolder('Box Tweaks')
@@ -164,11 +200,11 @@ window.addEventListener('dblclick', () => {
 })
 
 /****************************** Camera ******************************/
-const camera = new THREE.PerspectiveCamera(75, size.width / size.height)
+const camera = new THREE.PerspectiveCamera(45, size.width / size.height)
 //const dist = camera.position.distanceTo(mesh.position)
 
 camera.position.x = 1
-camera.position.z = 3
+camera.position.z = 6
 camera.position.y = 1
 
 scene.add(camera)
