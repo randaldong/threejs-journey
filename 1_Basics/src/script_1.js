@@ -35,88 +35,71 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /****************************** Object ******************************/
+// Geometry
+const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
+/* const geometry = new THREE.BufferGeometry()
+
+const triNum = 300
+const positionArray = new Float32Array(triNum * 3 * 3)
+for (let i = 0; i < triNum * 3 * 3; i += 3){
+    positionArray[i] = Math.cos(Math.random() * Math.PI)
+    positionArray[i + 1] = Math.sin(positionArray[i] * Math.PI)
+    positionArray[i + 2] = Math.cos(positionArray[i] * Math.PI)
+}
+const positionAttribute = new THREE.BufferAttribute(positionArray, 3)
+geometry.setAttribute('position', positionAttribute) */
+
 // Texture
 const loadingManager = new THREE.LoadingManager()
 const textureLoader = new THREE.TextureLoader(loadingManager)
-
-const colorKintsugi = textureLoader.load('textures/Kintsugi/basecolor.png')
-const normalKintsugi = textureLoader.load('textures/Kintsugi/normal.png')
-const metallicKintsugi = textureLoader.load('textures/Kintsugi/metallic.png')
-const roughnessKintsugi = textureLoader.load('textures/Kintsugi/roughness.png')
-const heightKintsugi = textureLoader.load('textures/Kintsugi/height.png')
-const aoKintsugi = textureLoader.load('textures/Kintsugi/ambientOcclusion.png')
-colorKintsugi.colorSpace = THREE.SRGBColorSpace
-
-const colorObsidian = textureLoader.load('textures/Obsidian/basecolor.png')
-const normalObsidian = textureLoader.load('textures/Obsidian/normal.png')
-const metallicObsidian = textureLoader.load('textures/Obsidian/metallic.png')
-const roughnessObsidian = textureLoader.load('textures/Obsidian/roughness.png')
-const heightObsidian = textureLoader.load('textures/Obsidian/height.png')
-const aoObsidian = textureLoader.load('textures/Obsidian/ambientOcclusion.png')
-colorObsidian.colorSpace = THREE.SRGBColorSpace
-
-const colorRedTile = textureLoader.load('textures/RedTile/basecolor.png')
-const normalRedTile = textureLoader.load('textures/RedTile/normal.png')
-const metallicRedTile = textureLoader.load('textures/RedTile/metallic.png')
-const roughnessRedTile = textureLoader.load('textures/RedTile/roughness.png')
-const heightRedTile = textureLoader.load('textures/RedTile/height.png')
-const aoRedTile = textureLoader.load('textures/RedTile/ambientOcclusion.png')
-colorRedTile.colorSpace = THREE.SRGBColorSpace
-
+const colorMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_basecolor.png')
+/* const normalMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_normal.png')
+const metallicMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_metallic.png')
+const roughnessMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_roughness.png')
+const heightMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_height.png')
+const aoMap = textureLoader.load('textures/Kintsugi_001/Kintsugi_001_ambientOcclusion.png') */
+colorMap.colorSpace = THREE.SRGBColorSpace
 
 // Material
 debugObj.color = '#aab6f3'
-const kintsugi = new THREE.MeshBasicMaterial()
-kintsugi.map = colorKintsugi
-
-const obsidian = new THREE.MeshBasicMaterial()
-obsidian.map = colorObsidian
-
-const redTile = new THREE.MeshBasicMaterial()
-redTile.map = colorRedTile
+const material = new THREE.MeshBasicMaterial({
+    //color: debugObj.color,
+    map: colorMap,
+    wireframe: false,
+})
 
 // Mesh
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.6, 16, 16),
-    kintsugi
-)
-sphere.position.x = -2
+const mesh = new THREE.Mesh(geometry, material)
 
-const box = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1, 2, 2, 2),
-    obsidian
-)
-const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.4, 0.2, 16, 32),
-    redTile
-)
-torus.position.x = 2
+mesh.position.x = 0.5
+mesh.position.z = -1
+mesh.position.y = 0
 
-scene.add(sphere, box ,torus)
+scene.add(mesh)
 
 /****************************** Debug GUI ******************************/
-const boxTweaks = gui.addFolder('Box Tweaks')
-//boxTweaks.close() // close this folder by default
-/* boxTweaks.addColor(debugObj, 'color')
+const cubeTweaks = gui.addFolder('Cube Tweaks')
+//cubeTweaks.close() // close this folder by default
+cubeTweaks.addColor(debugObj, 'color')
     .onChange(() => {
-    obsidian.color.set(debugObj.color)
-}) */
+    material.color.set(debugObj.color)
+})
 
-boxTweaks.add(obsidian, 'wireframe')
+cubeTweaks.add(material, 'wireframe')
 
 debugObj.spin = () => {
-    gsap.to(box.rotation, { duration: 2, y: box.rotation.y + Math.PI * 2 })
+    gsap.to(mesh.rotation, { duration: 2, y: mesh.rotation.y + Math.PI * 2 })
 }
-boxTweaks.add(debugObj, 'spin')
+cubeTweaks.add(debugObj, 'spin')
 
 debugObj.subdivision = 2;
-boxTweaks.add(debugObj, 'subdivision')
+cubeTweaks.add(debugObj, 'subdivision')
     .min(1)
     .max(10)
     .step(1)
     .onFinishChange(() => {
-        box.geometry.dispose()
-        box.geometry = new THREE.BoxGeometry(
+        mesh.geometry.dispose()
+        mesh.geometry = new THREE.BoxGeometry(
             1, 1, 1,
             debugObj.subdivision, debugObj.subdivision, debugObj.subdivision
         )
@@ -189,7 +172,7 @@ window.addEventListener('mousemove', (event) => {
 // OrbitControls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.target.set(box.position.x, box.position.y, box.position.z)
+controls.target.set(mesh.position.x, mesh.position.y, mesh.position.z)
 controls.update()
 
 /****************************** Renderer ******************************/
@@ -210,14 +193,7 @@ const tick = () => {
     const deltaTime = clock.getDelta ()
 
     // Update Object
-    sphere.rotation.y += 0.2 * deltaTime
-    box.rotation.y += 0.2 * deltaTime
-    torus.rotation.y += 0.2 * deltaTime
-    
-    sphere.rotation.x -= 0.5 * deltaTime
-    box.rotation.x -= 0.5 * deltaTime
-    torus.rotation.x -= 0.5 * deltaTime
-
+    //mesh.rotation.y += 1 * deltaTime
 
     // Update Camera
     // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 1.5 + mesh.position.x
