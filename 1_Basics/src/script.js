@@ -50,19 +50,20 @@ colorKintsugi.colorSpace = THREE.SRGBColorSpace
 
 const colorObsidian = textureLoader.load('textures/Obsidian/basecolor.png')
 const normalObsidian = textureLoader.load('textures/Obsidian/normal.png')
-const alphaObsidian = textureLoader.load('textures/Obsidian/translucency.png')
+const translucencyObsidian = textureLoader.load('textures/Obsidian/translucency.png')
 const roughnessObsidian = textureLoader.load('textures/Obsidian/roughness.png')
 const heightObsidian = textureLoader.load('textures/Obsidian/height.png')
 const aoObsidian = textureLoader.load('textures/Obsidian/ambientOcclusion.png')
 colorObsidian.colorSpace = THREE.SRGBColorSpace
 
-const colorRedTile = textureLoader.load('textures/RedTile/basecolor.png')
-const normalRedTile = textureLoader.load('textures/RedTile/normal.png')
-const metallicRedTile = textureLoader.load('textures/RedTile/metallic.png')
-const roughnessRedTile = textureLoader.load('textures/RedTile/roughness.png')
-const heightRedTile = textureLoader.load('textures/RedTile/height.png')
-const aoRedTile = textureLoader.load('textures/RedTile/ambientOcclusion.png')
-colorRedTile.colorSpace = THREE.SRGBColorSpace
+const colorScifiWall = textureLoader.load('textures/ScifiWall/basecolor.jpg')
+const normalScifiWall = textureLoader.load('textures/ScifiWall/normal.jpg')
+const metallicScifiWall = textureLoader.load('textures/ScifiWall/metallic.jpg')
+const roughnessScifiWall = textureLoader.load('textures/ScifiWall/roughness.jpg')
+const heightScifiWall = textureLoader.load('textures/ScifiWall/height.png')
+const aoScifiWall = textureLoader.load('textures/ScifiWall/ambientOcclusion.jpg')
+const opacityScifiWall = textureLoader.load('textures/ScifiWall/opacity.jpg')
+colorScifiWall.colorSpace = THREE.SRGBColorSpace
 
 
 // Material
@@ -73,25 +74,30 @@ kintsugi.normalMap = normalKintsugi
 kintsugi.metalnessMap = metallicKintsugi
 kintsugi.roughnessMap = roughnessKintsugi
 kintsugi.displacementMap = heightKintsugi
-kintsugi.displacementScale = 0.1
+kintsugi.displacementScale = 0.05
 kintsugi.aoMap = aoKintsugi
 
-const obsidian = new THREE.MeshStandardMaterial()
+const obsidian = new THREE.MeshPhysicalMaterial()
 obsidian.map = colorObsidian
 obsidian.normalMap = normalObsidian
 obsidian.roughnessMap = roughnessObsidian
 obsidian.displacementMap = heightObsidian
-obsidian.displacementScale = 0.1
+obsidian.displacementScale = 0.2
 obsidian.aoMap = aoObsidian
+obsidian.transmissionMap = translucencyObsidian
+obsidian.transmission = 0.2
+obsidian.thickness = 2
 
-const redTile = new THREE.MeshStandardMaterial()
-redTile.map = colorRedTile
-redTile.normalMap = normalRedTile
-redTile.metalnessMap = metallicRedTile
-redTile.roughnessMap = roughnessRedTile
-redTile.displacementMap = heightRedTile
-obsidian.displacementScale = 0.1
-redTile.aoMap = aoRedTile
+const scifiWall = new THREE.MeshStandardMaterial()
+scifiWall.map = colorScifiWall
+scifiWall.normalMap = normalScifiWall
+scifiWall.metalnessMap = metallicScifiWall
+scifiWall.roughnessMap = roughnessScifiWall
+scifiWall.displacementMap = heightScifiWall
+scifiWall.displacementScale = 0.3
+scifiWall.aoMap = aoScifiWall
+scifiWall.alphaMap = opacityScifiWall
+scifiWall.transparent = true
 
 // Mesh
 const sphere = new THREE.Mesh(
@@ -101,8 +107,8 @@ const sphere = new THREE.Mesh(
 sphere.position.x = -2
 
 const box = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    redTile
+    new THREE.BoxGeometry(1, 1, 1, 2, 2, 2),
+    scifiWall
 )
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.4, 0.2, 16, 32),
