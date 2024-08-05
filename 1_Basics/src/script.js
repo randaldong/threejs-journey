@@ -137,7 +137,7 @@ rgbeLoader.load("textures/EnvironmentMap/leadenhall_market_2k.hdr", (environment
 
 })
 
-/****************************** 3D Text ******************************/
+// 3D Text
 const fontLoader = new FontLoader()
 fontLoader.load(
     "fonts/optimer_bold.typeface.json",
@@ -244,7 +244,6 @@ window.addEventListener("dblclick", () => {
 
 /****************************** Camera ******************************/
 const camera = new THREE.PerspectiveCamera(45, size.width / size.height)
-//const dist = camera.position.distanceTo(mesh.position)
 
 camera.position.x = 1
 camera.position.z = 6
