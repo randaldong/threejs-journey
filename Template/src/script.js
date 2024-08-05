@@ -3,6 +3,9 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import gsap from 'gsap'
 import GUI from 'lil-gui'
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
+import { FontLoader } from 'three/addons/loaders/FontLoader.js'
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
 
 /****************************** Canvas ******************************/
 const canvas = document.querySelector('canvas.webgl')

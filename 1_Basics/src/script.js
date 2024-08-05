@@ -1,14 +1,16 @@
 /****************************** Import ******************************/
-import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import gsap from 'gsap'
-import GUI from 'lil-gui'
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
+import * as THREE from "three"
+import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+import gsap from "gsap"
+import GUI from "lil-gui"
+import { RGBELoader } from "three/addons/loaders/RGBELoader.js"
+import { FontLoader } from "three/addons/loaders/FontLoader.js"
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js"
 
 /****************************** Debug GUI ******************************/
 const gui = new GUI({
     width: 300,
-    title: 'Debug GUI',
+    title: "Debug GUI",
     closeFolders: false,
 
 })
@@ -16,21 +18,21 @@ const gui = new GUI({
 // gui.hide()
 
 // Toggle between open/close of the debug GUI
-window.addEventListener('keydown', (event) => {
-    if (event.key === 'g')
+window.addEventListener("keydown", (event) => {
+    if (event.key === "g")
         gui.open(gui._closed)
 })
 
 // Toggle the visibility of the debug GUI
-window.addEventListener('keydown', (event) => {
-    if (event.key === 'h')
+window.addEventListener("keydown", (event) => {
+    if (event.key === "h")
         gui.show(gui._hidden)
 })
 
 const debugObj = {}
 
 /****************************** Canvas ******************************/
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector("canvas.webgl")
 
 /****************************** Scene ******************************/
 const scene = new THREE.Scene()
@@ -40,34 +42,34 @@ const scene = new THREE.Scene()
 const loadingManager = new THREE.LoadingManager()
 const textureLoader = new THREE.TextureLoader(loadingManager)
 
-const colorKintsugi = textureLoader.load('textures/Kintsugi/basecolor.png')
-const normalKintsugi = textureLoader.load('textures/Kintsugi/normal.png')
-const metallicKintsugi = textureLoader.load('textures/Kintsugi/metallic.png')
-const roughnessKintsugi = textureLoader.load('textures/Kintsugi/roughness.png')
-const heightKintsugi = textureLoader.load('textures/Kintsugi/height.png')
-const aoKintsugi = textureLoader.load('textures/Kintsugi/ambientOcclusion.png')
+const colorKintsugi = textureLoader.load("textures/Kintsugi/basecolor.png")
+const normalKintsugi = textureLoader.load("textures/Kintsugi/normal.png")
+const metallicKintsugi = textureLoader.load("textures/Kintsugi/metallic.png")
+const roughnessKintsugi = textureLoader.load("textures/Kintsugi/roughness.png")
+const heightKintsugi = textureLoader.load("textures/Kintsugi/height.png")
+const aoKintsugi = textureLoader.load("textures/Kintsugi/ambientOcclusion.png")
 colorKintsugi.colorSpace = THREE.SRGBColorSpace
 
-const colorObsidian = textureLoader.load('textures/Obsidian/basecolor.png')
-const normalObsidian = textureLoader.load('textures/Obsidian/normal.png')
-const translucencyObsidian = textureLoader.load('textures/Obsidian/translucency.png')
-const roughnessObsidian = textureLoader.load('textures/Obsidian/roughness.png')
-const heightObsidian = textureLoader.load('textures/Obsidian/height.png')
-const aoObsidian = textureLoader.load('textures/Obsidian/ambientOcclusion.png')
+const colorObsidian = textureLoader.load("textures/Obsidian/basecolor.png")
+const normalObsidian = textureLoader.load("textures/Obsidian/normal.png")
+const translucencyObsidian = textureLoader.load("textures/Obsidian/translucency.png")
+const roughnessObsidian = textureLoader.load("textures/Obsidian/roughness.png")
+const heightObsidian = textureLoader.load("textures/Obsidian/height.png")
+const aoObsidian = textureLoader.load("textures/Obsidian/ambientOcclusion.png")
 colorObsidian.colorSpace = THREE.SRGBColorSpace
 
-const colorScifiWall = textureLoader.load('textures/ScifiWall/basecolor.jpg')
-const normalScifiWall = textureLoader.load('textures/ScifiWall/normal.jpg')
-const metallicScifiWall = textureLoader.load('textures/ScifiWall/metallic.jpg')
-const roughnessScifiWall = textureLoader.load('textures/ScifiWall/roughness.jpg')
-const heightScifiWall = textureLoader.load('textures/ScifiWall/height.png')
-const aoScifiWall = textureLoader.load('textures/ScifiWall/ambientOcclusion.jpg')
-const opacityScifiWall = textureLoader.load('textures/ScifiWall/opacity.jpg')
+const colorScifiWall = textureLoader.load("textures/ScifiWall/basecolor.jpg")
+const normalScifiWall = textureLoader.load("textures/ScifiWall/normal.jpg")
+const metallicScifiWall = textureLoader.load("textures/ScifiWall/metallic.jpg")
+const roughnessScifiWall = textureLoader.load("textures/ScifiWall/roughness.jpg")
+const heightScifiWall = textureLoader.load("textures/ScifiWall/height.png")
+const aoScifiWall = textureLoader.load("textures/ScifiWall/ambientOcclusion.jpg")
+const opacityScifiWall = textureLoader.load("textures/ScifiWall/opacity.jpg")
 colorScifiWall.colorSpace = THREE.SRGBColorSpace
 
 
 // Material
-//debugObj.color = '#aab6f3'
+//debugObj.color = "#aab6f3"
 const kintsugi = new THREE.MeshStandardMaterial()
 kintsugi.map = colorKintsugi
 kintsugi.normalMap = normalKintsugi
@@ -111,7 +113,7 @@ const box = new THREE.Mesh(
     scifiWall
 )
 const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.4, 0.2, 16, 32),
+    new THREE.TorusGeometry(0.5, 0.2, 20, 45),
     kintsugi
 )
 torus.position.x = 2
@@ -128,31 +130,66 @@ scene.add(pointLight) */
 
 // Environment Map
 const rgbeLoader = new RGBELoader()
-rgbeLoader.load('textures/EnvironmentMap/leadenhall_market_2k.hdr', (environmentMap) => {
+rgbeLoader.load("textures/EnvironmentMap/leadenhall_market_2k.hdr", (environmentMap) => {
     environmentMap.mapping = THREE.EquirectangularReflectionMapping
     scene.background = environmentMap
     scene.environment = environmentMap
 
 })
 
+/****************************** 3D Text ******************************/
+const fontLoader = new FontLoader()
+fontLoader.load(
+    "fonts/optimer_bold.typeface.json",
+    (font) => {
+        // Text geometry
+        const textGeometry = new TextGeometry(
+            "Randal's Wonderland",
+            {
+                font: font,
+                size: 0.5,
+                depth: 0.2,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.06,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 3,
+            }
+        )
+        textGeometry.center()
+
+        // Text material
+        const textMaterial = new THREE.MeshPhysicalMaterial()
+        textMaterial.transmission = 0.6
+        textMaterial.ior = 1.0
+        textMaterial.thickness = 2
+        textMaterial.roughness = 0.3
+        
+        // Text mesh
+        const text = new THREE.Mesh(textGeometry, textMaterial)
+        text.position.y = 1.5
+        scene.add(text)
+    }
+)
 
 /****************************** Debug GUI ******************************/
-const boxTweaks = gui.addFolder('Box Tweaks')
+const boxTweaks = gui.addFolder("Box Tweaks")
 //boxTweaks.close() // close this folder by default
-/* boxTweaks.addColor(debugObj, 'color')
+/* boxTweaks.addColor(debugObj, "color")
     .onChange(() => {
     obsidian.color.set(debugObj.color)
 }) */
 
-boxTweaks.add(obsidian, 'wireframe')
+boxTweaks.add(obsidian, "wireframe")
 
 debugObj.spin = () => {
     gsap.to(box.rotation, { duration: 2, y: box.rotation.y + Math.PI * 2 })
 }
-boxTweaks.add(debugObj, 'spin')
+boxTweaks.add(debugObj, "spin")
 
 debugObj.subdivision = 2;
-boxTweaks.add(debugObj, 'subdivision')
+boxTweaks.add(debugObj, "subdivision")
     .min(1)
     .max(10)
     .step(1)
@@ -171,7 +208,7 @@ const size = {
 }
 
 // Listen to the resize event
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
     // Update size
     size.width = window.innerWidth
     size.height = window.innerHeight
@@ -187,7 +224,7 @@ window.addEventListener('resize', () => {
 })
 
 // Listen to the double click event for toggling fullscreen
-window.addEventListener('dblclick', () => {
+window.addEventListener("dblclick", () => {
     const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
     if (!fullscreenElement) {
         if (canvas.requestFullscreen) {
@@ -222,7 +259,7 @@ const cursor = {
     y: 0,
 }
 // Cursor coordinates upon mouse move
-window.addEventListener('mousemove', (event) => {
+window.addEventListener("mousemove", (event) => {
     cursor.x = event.clientX / size.width - 0.5
     cursor.y = -(event.clientY / size.height - 0.5)
 })
@@ -259,7 +296,6 @@ const tick = () => {
     sphere.rotation.x -= 0.5 * deltaTime
     box.rotation.x -= 0.5 * deltaTime
     torus.rotation.x -= 0.5 * deltaTime
-
 
     // Update Camera
     // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 1.5 + mesh.position.x
