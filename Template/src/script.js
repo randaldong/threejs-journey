@@ -6,6 +6,7 @@ import GUI from 'lil-gui'
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
+import { RectAreaLightHelper } from "three/addons/helpers/RectAreaLightHelper.js"
 
 /****************************** Debug GUI ******************************/
 const gui = new GUI({
@@ -61,6 +62,9 @@ scene.add(mesh)
 /*          Light          */
 
 
+/*          Light Helpers          */
+
+
 /*          Environment Map          */
 
 
@@ -107,7 +111,7 @@ window.addEventListener("dblclick", () => {
 })
 
 /****************************** Camera ******************************/
-const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height)
+const camera = new THREE.PerspectiveCamera(45, size.width / size.height)
 camera.position.z = 3
 scene.add(camera)
 
@@ -115,14 +119,14 @@ scene.add(camera)
 // OrbitControls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.target.set(box.position.x, box.position.y, box.position.z)
+controls.target.set(mesh.position.x, mesh.position.y, mesh.position.z)
 controls.update()
 
 /****************************** Renderer ******************************/
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.setSize(sizes.width, sizes.height)
+renderer.setSize(size.width, size.height)
 //renderer.render(scene, camera)
 
 /****************************** Animation ******************************/

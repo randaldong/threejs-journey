@@ -1,0 +1,21 @@
+/* remove default margin or padding on all elements */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* prevent scroll beyond the limit on touch screens */
+html,
+body {
+    overflow: hidden;
+}
+
+.webgl {
+    position: fixed;
+    /* fix the canvas to remove scroll bar */
+    top: 0;
+    /* remove left & top margin */
+    left: 0;
+    outline: none;
+    /* remove the blue outline when drag n drop */
+}
